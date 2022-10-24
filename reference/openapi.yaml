@@ -1,0 +1,875 @@
+---
+openapi: 3.0.0
+info:
+  title: Order App API
+  description: "- The API for a basic food order app.\n- There are 3 type of users in app: customer, chef, shipper.         "
+  contact:
+    email: anhduydp123@gmail.com
+  version: 1.0.0
+servers:
+  - url: https://virtserver.swaggerhub.com/Anhduy-git/OrderApp/1.0.0
+    description: SwaggerHub API Auto Mocking
+  - url: http://localhost:3005
+    description: Development server.
+tags:
+  - name: Authentication
+    description: API related to authentication flow.
+  - name: Customer
+    description: API related to customers.
+  - name: Chef
+    description: API related to chefs.
+  - name: Shipper
+    description: API related to shippers.
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      description: login user
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_login_body'
+            example:
+              phoneNumber: '0589934859'
+      responses:
+        '200':
+          description: Login successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+        '401':
+          description: Login failed (phoneNumber not found)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Phone number not found
+  /api/v1/auth/logout:
+    get:
+      tags:
+        - Authentication
+      operationId: logout
+      responses:
+        '200':
+          description: Logout successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+        '401':
+          description: Logout failed (Unauthorized)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Authentication failed
+  /api/v1/auth/verify-otp:
+    post:
+      tags:
+        - Authentication
+      operationId: verifyOTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_verifyotp_body'
+            example:
+              phoneNumber: '0589934859'
+              otp: '1234'
+      responses:
+        '200':
+          description: Verify OTP successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+                content:
+                  userType: 0
+                  customer:
+                    _id: 634e6f12159e61e1aeaba181
+                    userID: 634e6f12159e61e1aeaba17f
+                    name: Anh Duy
+                    dob: 2002-04-07T17:00:00.000Z
+                    phoneNumber: '0589934859'
+                    address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                    location:
+                      lat: 11.2
+                      lng: 12.3
+                    avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNGU2ZjEyMTU5ZTYxZTFhZWFiYTE3ZiIsImlhdCI6MTY2NjA5NTU1NH0.i4J6UJJ_3mUg3EGjWDVkSqnP58rv3friYgsWdtvfGk4
+        '401':
+          description: Verify OTP failed (Expired OTP)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Expired OTP!
+  /api/v1/customers:
+    post:
+      tags:
+        - Customer
+      description: Register new customer
+      operationId: registerCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerInformation'
+      responses:
+        '200':
+          description: Register customer successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+                content:
+                  userType: 0
+                  customer:
+                    _id: 634e6f12159e61e1aeaba181
+                    userID: 634e6f12159e61e1aeaba17f
+                    name: Anh Duy
+                    dob: 2002-04-07T17:00:00.000Z
+                    phoneNumber: '0589934859'
+                    address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                    location:
+                      lat: 11.2
+                      lng: 12.3
+                    avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNGU2ZjEyMTU5ZTYxZTFhZWFiYTE3ZiIsImlhdCI6MTY2NjA5NTU1NH0.i4J6UJJ_3mUg3EGjWDVkSqnP58rv3friYgsWdtvfGk4
+        '400':
+          description: Register customer failed (Account already exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 400
+                  message: Account already exists
+  /api/v1/chefs:
+    get:
+      tags:
+        - Chef
+      description: Get chefs around customer
+      operationId: getChefs
+      parameters:
+        - name: customerLocation
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: 123.23,11.5
+        - name: page
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 5
+      responses:
+        '200':
+          description: Get chefs successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+                content:
+                  - _id: 634e6f12159e61e1aeaba181
+                    userID: 634e6f12159e61e1aeaba17f
+                    name: Anh Duy
+                    dob: 2002-04-07T17:00:00.000Z
+                    phoneNumber: '0589934859'
+                    address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                    location:
+                      lat: 11.2
+                      lng: 12.3
+                    friends:
+                      - chef1
+                      - chef2
+                    avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                    idImage:
+                      front: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                      back: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                    kitchenImage: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+        '400':
+          description: Get chefs failed (Unauthorized)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 400
+                  message: Authentication failed
+      security:
+        - BearerAuth: []
+    post:
+      tags:
+        - Chef
+      description: Register new chef
+      operationId: registerChef
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChefInformation'
+      responses:
+        '200':
+          description: Register chef successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+                content:
+                  userType: 1
+                  chef:
+                    _id: 634e6f12159e61e1aeaba181
+                    userID: 634e6f12159e61e1aeaba17f
+                    name: Anh Duy
+                    dob: 2002-04-07T17:00:00.000Z
+                    phoneNumber: '0589934859'
+                    address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                    location:
+                      lat: 11.2
+                      lng: 12.3
+                    avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                    idImage:
+                      front: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                      back: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                    kitchenImage: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNGU2ZjEyMTU5ZTYxZTFhZWFiYTE3ZiIsImlhdCI6MTY2NjA5NTU1NH0.i4J6UJJ_3mUg3EGjWDVkSqnP58rv3friYgsWdtvfGk4
+        '400':
+          description: Register chef failed (Account already exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 400
+                  message: Account already exists
+  /api/v1/shippers:
+    post:
+      tags:
+        - Shipper
+      description: Register new shipper
+      operationId: registerShipper
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipperInformation'
+      responses:
+        '200':
+          description: Register shipper successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+                content:
+                  userType: 2
+                  shipper:
+                    _id: 634e6f12159e61e1aeaba181
+                    userID: 634e6f12159e61e1aeaba17f
+                    name: Anh Duy
+                    dob: 2002-04-07T17:00:00.000Z
+                    phoneNumber: '0589934859'
+                    avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                    idImage:
+                      front: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                      back: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                    faceImage:
+                      left: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                      mid: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                      right: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1666084627/ssyahmullygndku540zt.png
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNGU2ZjEyMTU5ZTYxZTFhZWFiYTE3ZiIsImlhdCI6MTY2NjA5NTU1NH0.i4J6UJJ_3mUg3EGjWDVkSqnP58rv3friYgsWdtvfGk4
+        '400':
+          description: Register shipper failed (Account already exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 400
+                  message: Account already exists
+  /api/v1/orders:
+    get:
+      tags:
+        - Order
+      description: Get orders of customer or chef
+      operationId: getOrders
+      parameters:
+        - name: customerID
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: 63567a028ff4c8398c3092a9
+        - name: chefID
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: 63567a028ff4c8398c3092a9
+        - name: page
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 5
+      responses:
+        '200':
+          description: Get orders successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+                content:
+                  - _id: 635678d41061a9cdc9e71d4d
+                    customer:
+                      id: 635678d41061a9cdc9e71d4d
+                      name: Anh Duy
+                      phoneNumber: '0589934863'
+                      address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                      location:
+                        lat: 10.7522975
+                        lng: 106.6664395
+                      avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+                    chef:
+                      id: 635678d41061a9cdc9e71d4d
+                      name: Anh Duy
+                      phoneNumber: '0589934863'
+                      address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                      location:
+                        lat: 10.7522975
+                        lng: 106.6664395
+                      avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+                    dishes:
+                      - name: com ga
+                        description: ngon
+                        quantity: 2
+                        price: 300
+                        image: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+                    totalPrice: 600
+                    orderTime: 2022-10-24T11:48:58.235Z
+                    status: 0
+        '401':
+          description: Get orders failed (Unauthorized)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Authentication failed
+      security:
+        - BearerAuth: []
+    post:
+      tags:
+        - Order
+      description: Create new order
+      operationId: createOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInformation'
+      responses:
+        '200':
+          description: Create order successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+        '401':
+          description: Create order failed (Unauthorized)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Authentication failed
+      security:
+        - BearerAuth: []
+  /api/v1/dishes:
+    get:
+      tags:
+        - Dish
+      description: Get dish ofchef
+      operationId: getDishes
+      parameters:
+        - name: chefID
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: 63567a028ff4c8398c3092a9
+        - name: page
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 5
+      responses:
+        '200':
+          description: Get orders successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+                content:
+                  - _id: 635678d41061a9cdc9e71d4d
+                    chef:
+                      id: 635678d41061a9cdc9e71d4d
+                      name: Anh Duy
+                      phoneNumber: '0589934863'
+                      address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                      avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+                    name: com ga
+                    description: ngon
+                    quantity: 2
+                    price: 300
+                    saleDate: 2022-10-24T11:54:51.693Z
+                    image: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+        '401':
+          description: Get orders failed (Unauthorized)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Authentication failed
+      security:
+        - BearerAuth: []
+    post:
+      tags:
+        - Dish
+      description: Create new dish
+      operationId: createDish
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DishInformation'
+      responses:
+        '200':
+          description: Create dish successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+        '401':
+          description: Create dish failed (Unauthorized)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Authentication failed
+      security:
+        - BearerAuth: []
+  /api/v1/deliveries:
+    get:
+      tags:
+        - Delivery
+      description: Get deliveries
+      operationId: getDeliveries
+      parameters:
+        - name: shipperID
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: 63567a028ff4c8398c3092a9
+        - name: page
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+          example: 5
+      responses:
+        '200':
+          description: Get deliveries successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+                content:
+                  - _id: 634e7010159e61e1aeaba1a1
+                    order:
+                      id: 634e7010159e61e1aeaba1a1
+                      customer:
+                        id: 635678d41061a9cdc9e71d4d
+                        name: Anh Duy
+                        phoneNumber: '0589934863'
+                        address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                        location:
+                          lat: 10.7522975
+                          lng: 106.6664395
+                        avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+                      chef:
+                        id: 635678d41061a9cdc9e71d4d
+                        name: Anh Duy
+                        phoneNumber: '0589934863'
+                        address: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+                        location:
+                          lat: 10.7522975
+                          lng: 106.6664395
+                        avatar: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+                      dishes:
+                        - name: com ga
+                          description: ngon
+                          quantity: 2
+                          price: 300
+                          image: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+                      totalPrice: 600
+                      orderTime: 2022-10-24T11:48:58.235Z
+                      status: 0
+                    deliveryTime: 2022-10-24T11:48:58.244Z
+                    fee: 60
+                    status: 0
+        '401':
+          description: Get deliveries failed (Unauthorized)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Authentication failed
+      security:
+        - BearerAuth: []
+  /api/v1/deliveries/{deliveryID}:
+    patch:
+      tags:
+        - Delivery
+      description: Update delivery
+      operationId: updateDelivery
+      parameters:
+        - name: deliveryID
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: 63567a028ff4c8398c3092a9
+      responses:
+        '200':
+          description: Update delivery successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: true
+        '401':
+          description: Update delivery failed (Unauthorized)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              example:
+                status: false
+                error:
+                  statusCode: 401
+                  message: Authentication failed
+      security:
+        - BearerAuth: []
+components:
+  schemas:
+    CustomerInformation:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Anh Duy
+        dob:
+          type: string
+          example: 2002-04-07T17:00:00.000Z
+        phoneNumber:
+          type: string
+          example: '0589934859'
+        address:
+          type: string
+          example: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+        avatar:
+          type: string
+          example: base64string
+    ChefInformation:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Anh Duy
+        dob:
+          type: string
+          example: 2002-04-07T17:00:00.000Z
+        phoneNumber:
+          type: string
+          example: '0589934859'
+        address:
+          type: string
+          example: Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh
+        avatar:
+          type: string
+          example: base64string
+        idImage:
+          $ref: '#/components/schemas/ChefInformation_idImage'
+        kitchenImage:
+          type: string
+          example: base64string
+    ShipperInformation:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Anh Duy
+        dob:
+          type: string
+          example: 2002-04-07T17:00:00.000Z
+        phoneNumber:
+          type: string
+          example: '0589934859'
+        avatar:
+          type: string
+          example: base64string
+        idImage:
+          $ref: '#/components/schemas/ChefInformation_idImage'
+        faceImage:
+          $ref: '#/components/schemas/ShipperInformation_faceImage'
+    OrderInformation:
+      type: object
+      properties:
+        chef:
+          $ref: '#/components/schemas/OrderInformation_chef'
+        customer:
+          $ref: '#/components/schemas/OrderInformation_chef'
+        dishes:
+          type: array
+          example:
+            - name: com ga
+              description: ngon
+              quantity: 2
+              price: 300
+              image: https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg
+          items:
+            $ref: '#/components/schemas/OrderInformation_dishes'
+    DishInformation:
+      type: object
+      properties:
+        chef:
+          $ref: '#/components/schemas/DishInformation_chef'
+        name:
+          type: string
+          example: Gà chiên
+        description:
+          type: string
+          example: gà, bột chiên giòn, dầu ăn
+        price:
+          type: number
+          example: 120
+        image:
+          type: string
+          example: base64string
+    auth_login_body:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+    inline_response_200:
+      type: object
+      properties:
+        status:
+          type: boolean
+        error:
+          type: object
+        content:
+          type: object
+    auth_verifyotp_body:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        otp:
+          type: string
+    ChefInformation_idImage:
+      type: object
+      properties:
+        front:
+          type: string
+        back:
+          type: string
+      example: '{"front":"base64string","back":"base64string"}'
+    ShipperInformation_faceImage:
+      type: object
+      properties:
+        left:
+          type: string
+        mid:
+          type: string
+        right:
+          type: string
+      example: '{"left":"base64string","mid":"base64string","right":"base64string"}'
+    OrderInformation_chef_location:
+      type: object
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+    OrderInformation_chef:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        phoneNumber:
+          type: string
+        address:
+          type: string
+        location:
+          $ref: '#/components/schemas/OrderInformation_chef_location'
+        avatar:
+          type: string
+      example: '{"id":"635678d41061a9cdc9e71d4d","name":"Anh Duy","phoneNumber":"0589934863","address":"Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh","location":{"lat":10.7522975,"lng":106.6664395},"avatar":"https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg"}'
+    OrderInformation_dishes:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number
+        image:
+          type: string
+    DishInformation_chef:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        phoneNumber:
+          type: string
+        address:
+          type: string
+        avatar:
+          type: string
+      example: '{"id":"635678d41061a9cdc9e71d4d","name":"Anh Duy","phoneNumber":"0589934863","address":"Kí túc xá 135b Trần hưng đạo, quận 5, thành phố Hồ Chí Minh","avatar":"https://res.cloudinary.com/dkgkiwvpm/image/upload/v1662636137/com_nha_nha/com_nha_nha_fc_avatar/dmaghfpfwqoqk8e7oqyx.jpg"}'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

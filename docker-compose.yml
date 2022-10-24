@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mongo_db:
+    container_name: mongo_db_container
+    image: mongo:latest
+    restart: always
+    ports:
+      - 8081:27017
+  api:
+    build: .
+    ports:
+      - 3005:3000
+    environment:
+      PORT: 3000
+      MONGODB_URL_DEV: mongodb://mongo_db:27017/comnhanha
+      JWT_SECRET_DEV: ad20126037
+      CLOUDINARY_NAME_DEV: dkgkiwvpm
+      CLOUDINARY_API_KEY_DEV: 331726611528568
+      CLOUDINARY_API_SECRET_DEV: vXFnv3ovQGzDB9tUD-HYuuPxCW4
+      GOONG_API_KEY_DEV: 4K2SoXKRNxudtMaFzGmZKzGS1dRgcj0NOPpR6SDb
+      TWILIO_ACCOUNT_SID_DEV: AC383329243129235341354403ee409c2c
+      TWILIO_AUTH_TOKEN_DEV: 0fdf6c1bf7ff56d6c8307d000ee77c4f
+    depends_on:
+      - mongo_db
