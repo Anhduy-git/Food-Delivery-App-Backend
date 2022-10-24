@@ -7,8 +7,8 @@ info:
     email: anhduydp123@gmail.com
   version: 1.0.0
 servers:
-  - url: https://virtserver.swaggerhub.com/Anhduy-git/OrderApp/1.0.0
-    description: SwaggerHub API Auto Mocking
+  - url: https://ad-order-app.herokuapp.com
+    description: Production server.
   - url: http://localhost:3005
     description: Development server.
 tags:
