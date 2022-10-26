@@ -1,14 +1,17 @@
-const { ChefService } = require('../../services');
+const { ChefService, LoggingService } = require('../../services');
 const Response = require('../../utils/response');
 const StatusCodes = require('../../utils/status-codes');
 const { BadRequestError } = require('../../utils/errors');
 
 module.exports = function ChefController() {
 	this.chefService = new ChefService();
+	this.loggingService = new LoggingService();
 	// [POST] /chefs
 	const registerChef = async (req, res, next) => {
 		try {
 			const result = await this.chefService.registerChef(req.body);
+			// call logging service
+			this.loggingService.registerLoggingProducer(result.chef.phoneNumber);
 			res
 				.status(StatusCodes.OK)
 				.json(new Response({ status: true, content: result }));

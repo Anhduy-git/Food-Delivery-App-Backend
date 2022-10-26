@@ -5,6 +5,7 @@ const ShipperController = require('./shipper.controller');
 const DishController = require('./dish.controller');
 const OrderController = require('./order.controller');
 const DeliveryController = require('./delivery.controller');
+const LoggingController = require('./logging.controller');
 
 module.exports = {
 	AuthController,
@@ -13,5 +14,6 @@ module.exports = {
 	ShipperController,
 	DishController,
 	OrderController,
-	DeliveryController
+	DeliveryController,
+	LoggingController
 };

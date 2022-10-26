@@ -6,6 +6,7 @@ const shipperRouter = require('./shipper.route');
 const dishRouter = require('./dish.route');
 const orderRouter = require('./order.route');
 const deliveryRouter = require('./delivery.route');
+const loggingRouter = require('./logging.route');
 
 module.exports = () => {
 	const router = express.Router();
@@ -17,6 +18,7 @@ module.exports = () => {
 	router.use('/dishes', dishRouter());
 	router.use('/orders', orderRouter());
 	router.use('/deliveries', deliveryRouter());
+	router.use('/logs', loggingRouter());
 
 	return router;
 };

@@ -5,6 +5,7 @@ const ShipperService = require('./shipper.service');
 const DishService = require('./dish.service');
 const OrderService = require('./order.service');
 const DeliveryService = require('./delivery.service');
+const LoggingService = require('./logging.service');
 
 module.exports = {
 	AuthService,
@@ -13,5 +14,6 @@ module.exports = {
 	ShipperService,
 	DishService,
 	OrderService,
-	DeliveryService
+	DeliveryService,
+	LoggingService
 };
