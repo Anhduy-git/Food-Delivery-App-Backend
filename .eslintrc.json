@@ -22,6 +22,9 @@
 		"no-plusplus": "off",
 		"no-useless-constructor": "off",
 		"no-param-reassign": "off",
-		"consistent-return": "off"		
+		"consistent-return": "off",
+		"node/no-unpublished-require": "off",
+		"no-undef": "off"
+		
 	}
 }

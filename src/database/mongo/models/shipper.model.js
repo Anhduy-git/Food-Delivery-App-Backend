@@ -24,17 +24,6 @@ const shipperSchema = new mongoose.Schema({
 		unique: true,
 		required: true
 	},
-	address: {
-		type: String,
-		required: true
-	},
-	location: {
-		_id: false,
-		type: {
-			lat: Number,
-			lng: Number
-		}
-	},
 	avatar: {
 		type: String
 	},
@@ -65,21 +54,6 @@ const shipperSchema = new mongoose.Schema({
 		},
 		required: true
 	}
-});
-
-shipperSchema.pre('save', async function (next) {
-	if (this.isModified('address')) {
-		const { address } = this;
-		const addressEncoded = encodeURIComponent(address);
-		const url = `https://rsapi.goong.io/geocode?address=${addressEncoded}&api_key=${config.goong_api_key}`;
-		const res = await fetch(url);
-		const data = await res.json();
-		this.location = {
-			lat: data.results[0].geometry.location.lat,
-			lng: data.results[0].geometry.location.lng
-		};
-	}
-	next(); // go to save shipper
 });
 
 module.exports = mongoose.model('Shipper', shipperSchema);

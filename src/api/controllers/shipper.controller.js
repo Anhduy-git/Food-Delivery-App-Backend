@@ -9,7 +9,7 @@ module.exports = function ShipperController() {
 		try {
 			const result = await this.shipperService.registerShipper(req.body);
 			res
-				.status(StatusCodes.OK)
+				.status(StatusCodes.CREATED)
 				.json(new Response({ status: true, content: result }));
 		} catch (err) {
 			next(err);

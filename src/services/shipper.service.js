@@ -18,7 +18,6 @@ module.exports = function ShipperService() {
 	const registerShipper = async ({
 		phoneNumber,
 		name,
-		address,
 		dob,
 		avatar,
 		idImage,
@@ -72,7 +71,6 @@ module.exports = function ShipperService() {
 			name,
 			phoneNumber,
 			dob,
-			address,
 			idImage: {
 				front: idImageFrontUploadedURL,
 				back: idImageBackUploadedURL

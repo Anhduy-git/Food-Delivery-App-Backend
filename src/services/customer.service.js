@@ -23,11 +23,11 @@ module.exports = function CustomerService() {
 		avatar
 	}) => {
 		const user = await this.userRepository.getUserByPhoneNumber(phoneNumber);
-
 		// check if user exist
 		if (user) {
 			throw new BadRequestError('Account already exists');
 		}
+
 		// upload & get image uploaded url
 		const avatarPreset = 'order_app_customer_avatar';
 		const avatarUploadedURL = await this.imageStorageClient.uploadImage(

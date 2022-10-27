@@ -4,7 +4,7 @@ const config = require('../../config');
 
 module.exports = () => {
 	mongoose.connect(config.mongodb_url);
-
+	console.log(config.mongodb_url);
 	const db = mongoose.connection;
 	db.on('error', () => {
 		throw new InternalServerError('Connect to MongoDB failed');
