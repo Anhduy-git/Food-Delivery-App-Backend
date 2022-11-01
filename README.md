@@ -16,6 +16,10 @@ There are 3 types of user in the web:
 Here is our team, you can connect us through our Linkedin:
 - [Nguyen Tran Anh Duy (Backend Developper)](https://www.linkedin.com/in/duy-nguyen-tran-anh/).
 
+## Diagram
+![Order_App_ER-1](https://user-images.githubusercontent.com/84486806/199256515-64d43829-c7a2-4935-9ed0-26cd30306e34.png)
+
+
 
 ## Tech Stack
 
