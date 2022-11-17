@@ -2,7 +2,7 @@
 
 
 
-# Order management application (Back-end)
+# Food delivery application (Back-end)
 
 Back-end of a food delivery application.
 
